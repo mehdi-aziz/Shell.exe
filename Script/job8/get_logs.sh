@@ -1,7 +1,9 @@
-#./bin/bash
+#!/bin/bash
 
-var1=$(date +%d-%m-%Y-%H-%M)
+fichier="number_connections_$(date +%d-%m-%Y-%H:%M)"
 
-grep -c 'session opened' /var/log/auth.log > numberconnection$var1
-tar -zcvf numberconnection$var1.tar.gz numberconnection$var1
-mv numberconnection$var1.tar.gz /home/hugo/Script/job8/Backup
+sudo grep Accepted /var/log/auth.log >> $fichier && tar --force-local -cvz -f "$fichier".tar.gz $fichier
+
+mv "$fichier".tar.gz /home/mehdi/Documents/shell.exe/job8/Backup
+rm $fichier
+
