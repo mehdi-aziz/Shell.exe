@@ -1,18 +1,18 @@
 #./bin/bash
 
-MY_INPUT='/home/hugo/Script/job9/Shell_Userlist.csv'
-
-while IFS=, read -r columnID columnPrenom columnNom columnMdp columnRole || [ -n "$columnRole" ];
+!/bin/bash
+while IFS="," read -r id firstname lastname pwd usertype ;
 do
-        varusername=$columnPrenom$columnNom
-        cleanvarusername="$(echo "${varusername}" | tr -d '[:space:]')"
-        sudo useradd -p $(openssl passwd -1 $columnMdp) $cleanvarusername
+firstlast="$firstname$lastname"
 
-        if [ $columnRole=Admin* ];
-	then
-                sudo usermod -aG sudo $cleanvarusername
-        fi
-
-done < $MY_INPUT
-
-cp Shell_Userlist.csv Shell_Userlist_Backup.cvs
+if [ $usertype == Admin ]
+then
+useradd -u $id -c "$firstname $lastname" $firstlast
+echo  $firstlast:$pwd | chpasswd
+usermod -aG sudo $firstlast
+elif [ $usertype == User ]
+then
+useradd -u $id -c "$firstname $lastname" $firstlast
+echo  $firstlast:$pwd | chpasswd
+fi
+done < <(tail -n +2 Shell_Userlist.csv)
